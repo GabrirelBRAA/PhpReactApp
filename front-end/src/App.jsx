@@ -10,7 +10,15 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 
-import Button from  '@mui/material/Button'
+
+import Button from '@mui/material/Button'
+
+function changeMinutesSecondsToSeconds(minutesSeconds) {
+  let numberArray = minutesSeconds.split(':');
+  let minutes = parseInt(numberArray[0]);
+  let seconds = parseInt(numberArray[1]);
+  return (minutes * 60) + seconds;
+}
 
 function App() {
 
@@ -19,33 +27,33 @@ function App() {
   const [open, setOpen] = useState(false);
 
 
-  useEffect(() =>{
-    async function fetchData(){
-    const url = "http://127.0.0.1:8000/albumsfaixas";
-    try{
-      const response = await fetch(url);
-      if(!response.ok){
-        throw new Error(`Response status: ${response.status}`);
-      }
-      const json = await response.json();
-      setJson(json);
+  useEffect(() => {
+    async function fetchData() {
+      const url = "http://127.0.0.1:8000/albumsfaixas";
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+        const json = await response.json();
+        setJson(json);
 
-    } catch(error){
-      console.log(error.message);
+      } catch (error) {
+        console.log(error.message);
+      }
     }
-  }
     fetchData();
   }, [updates])
 
-  function handleOpen(){
+  function handleOpen() {
     setOpen(true);
   }
 
-  function handleClose(){
+  function handleClose() {
     setOpen(false);;
   }
 
-  async function createNewAlbum(json){
+  async function createNewAlbum(json) {
     const url = "http://127.0.0.1:8000/albums";
     fetch(url,
       {
@@ -57,21 +65,33 @@ function App() {
         body: JSON.stringify(json)
       }
     ).then(response => response.json())
-    .then(response => {setUpdate(updates + 1)})
-  } 
+      .then(response => { setUpdate(updates + 1) })
+  }
 
-  async function deleteAlbum(id){
+  async function deleteAlbum(id) {
     const url = "http://127.0.0.1:8000/albums/" + id;
     fetch(url,
       {
         method: "DELETE"
       }
-    ).then(response=>response.json())
-    .then(response => { console.log(response);setUpdate(updates + 1)});
+    ).then(response => response.json())
+      .then(response => { console.log(response); setUpdate(updates + 1) });
   }
 
-  async function createNewFaixa(json, id){
+  async function deleteFaixa(id) {
+    const url = "http://127.0.0.1:8000/faixas/" + id;
+    fetch(url,
+      {
+        method: "DELETE"
+      }
+    ).then(response => response.json())
+      .then(response => { console.log(response); setUpdate(updates + 1) });
+  }
+
+  async function createNewFaixa(json, id) {
     json["album_id"] = id;
+    json["length"] = changeMinutesSecondsToSeconds(json["length"]);
+    console.log(json);
     const url = "http://127.0.0.1:8000/faixas";
     fetch(url,
       {
@@ -83,49 +103,73 @@ function App() {
         body: JSON.stringify(json)
       }
     ).then(response => response.json())
-    .then(response => {setUpdate(updates + 1)})
-    
+      .then(response => { setUpdate(updates + 1) })
+  }
+
+  async function updateAlbum(json, id) {
+    const url = "http://127.0.0.1:8000/albums/" + id;
+    fetch(url,
+      {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        method: "PUT",
+        body: JSON.stringify(json)
+      }
+    ).then(response => response.json())
+      .then(response => { setUpdate(updates + 1) })
+
+  }
+
+  async function searchQuery(query) {
+    const url = "http://127.0.0.1:8000/search?" + new URLSearchParams({
+      query: query
+    }).toString();
+    console.log(url);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+      const json = await response.json();
+      setJson(json);
+
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  function handleSearch(event){
+    event.preventDefault();
+    const data = new FormData(event.target);
+    const query = Object.fromEntries(data.entries()).query;
+    if(query){
+      searchQuery(query);
+    } else{
+      setUpdate(updates + 1);
+    }
   }
 
   var state = []
-  for(let i = 0; i < jsonState.length; ++i){
+  for (let i = 0; i < jsonState.length; ++i) {
     let album = jsonState[i];
     let faixas = [];
-    for (let j = 0; j < album.faixas.length; j++){
-      faixas.push(album.faixas[j].title); 
+    for (let j = 0; j < album.faixas.length; j++) {
+      faixas.push(album.faixas[j].title);
     }
-    state.push(<Album key={album.id} album={album} deleteAlbum={deleteAlbum} createNewFaixa={createNewFaixa}/>);
+    state.push(<Album key={album.id} album={album} deleteAlbum={deleteAlbum} createNewFaixa={createNewFaixa}
+      deleteFaixa={deleteFaixa} updateAlbum={updateAlbum} />);
   }
 
   return (
-    /*
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-    */
-   <>
-        <Button onClick={handleOpen} variant="contained">Adicionar Album</Button>
-        <Dialog onSubmit={handleClose}
+      <form onSubmit={handleSearch}>
+        <TextField color="primary" id="outlined-basic" label="Pesquisa" name="query" variant="standard" />
+        <Button type="submit">Pesquisar</Button>
+      </form>
+      <Button onClick={handleOpen} variant="contained">Adicionar Album</Button>
+      <Dialog onSubmit={handleClose}
         PaperProps={{
           component: 'form',
           onSubmit: (event) => {
@@ -136,15 +180,16 @@ function App() {
             console.log(formJson)
             createNewAlbum(formJson);
             handleClose();
-          }}}
-          open={open} onClose={handleClose} >
-          <DialogTitle  >Novo álbum</DialogTitle>
-          <TextField id="outlined-basic" label="Título" name="title" variant="outlined" />
-          <Button type='submit'>Criar</Button>
+          }
+        }}
+        open={open} onClose={handleClose} >
+        <DialogTitle  >Novo álbum</DialogTitle>
+        <TextField id="outlined-basic" label="Título" name="title" variant="outlined" />
+        <Button type='submit'>Criar</Button>
 
-        </Dialog>
-        {state}
-   </>
+      </Dialog>
+      {state}
+    </>
   )
 }
 

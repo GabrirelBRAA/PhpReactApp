@@ -10,6 +10,7 @@ Route::get('/', function () {
 
 Route::get('/albums', [AppController::class, 'indexAlbum']);
 Route::post('/albums', [AppController::class, 'storeAlbum']);
+Route::put('/albums/{id}', [AppController::class, 'updateAlbum']);
 Route::get('/albums/schema', [AppController::class, 'getAlbumSchema']);
 Route::delete('/albums/{id}', [AppController::class, 'deleteAlbum']);
 
