@@ -27,4 +27,5 @@ O backend funcionou de boa no docker.
 
 (Não mexi muito no .gitignore e nem limpei algumas coisas geradas como o react.svg então desculpa se não estiver muito apresentável)
 
-
+# Imagem
+![Imagem do projeto](./Imagem%20do%20projeto.png)
