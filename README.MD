@@ -25,4 +25,6 @@ versão do node: v21.7.1
 
 O backend funcionou de boa no docker.
 
+(Não mexi muito no .gitignore e nem limpei algumas coisas geradas como o react.svg então desculpa se não estiver muito apresentável)
+
 
