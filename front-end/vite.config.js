@@ -7,7 +7,10 @@ export default defineConfig({
 	server: {
 		hmr: false,
 		host: true,
-		port: 5173,
-		followSymlinks: false,
-	}
+    		port: 5137
+	},
+	preview: {
+    host: true,
+    port: 5137
+	} 
 })
