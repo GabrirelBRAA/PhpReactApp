@@ -21,9 +21,9 @@ function Faixa(props) {
         setOpen(false);
     }
 
-    var color = "white";
+    var color = "#F8DBFF";
     if(props.faixa.selected){
-        color = "yellow;"
+        color = "#F7E06E"
     }
 
     return <><ListItem sx={{backgroundColor: color}}>

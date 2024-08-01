@@ -93,7 +93,7 @@ function Album(props) {
 
     return <>
         <List sx={{ width: '100%', minWidth: 350, bgcolor: 'background.paper', color: 'black', marginBottom: "50px", padding: "0" }}>
-            <ListItem disablePadding sx={{ backgroundColor: 'purple', padding: "none" }}>
+            <ListItem disablePadding sx={{ background: 'linear-gradient(to right bottom, #CA26F2, 10%, #F8DBFF)', padding: "none" }}>
                 <ListItemButton onClick={handleClick}>{props.album.title}</ListItemButton>
                 <ListItemSecondaryAction>
                     <IconButton onClick={handleEditAlbum} edge="end" aria-label="delete">

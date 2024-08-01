@@ -9,6 +9,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 
 import Button from '@mui/material/Button'
@@ -140,13 +142,13 @@ function App() {
     }
   }
 
-  function handleSearch(event){
+  function handleSearch(event) {
     event.preventDefault();
     const data = new FormData(event.target);
     const query = Object.fromEntries(data.entries()).query;
-    if(query){
+    if (query) {
       searchQuery(query);
-    } else{
+    } else {
       setUpdate(updates + 1);
     }
   }
@@ -164,11 +166,18 @@ function App() {
 
   return (
     <>
-      <form onSubmit={handleSearch}>
+      <Typography variant="h1" gutterBottom>
+        Tião Carreiro e Pardinho
+        <Typography variant="subtitle1" gutterBottom>
+          Discografia
+        </Typography>
+      </Typography>
+    <div>
+
+      <form onSubmit={handleSearch} >
         <TextField color="primary" id="outlined-basic" label="Pesquisa" name="query" variant="standard" />
-        <Button type="submit">Pesquisar</Button>
       </form>
-      <Button onClick={handleOpen} variant="contained">Adicionar Album</Button>
+      <Button sx={{ marginTop: 5, marginBottom: 5, backgroundColor: "green" }} onClick={handleOpen} variant="contained">Adicionar Album</Button>
       <Dialog onSubmit={handleClose}
         PaperProps={{
           component: 'form',
@@ -189,6 +198,7 @@ function App() {
 
       </Dialog>
       {state}
+    </div>
     </>
   )
 }
